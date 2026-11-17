@@ -16,7 +16,7 @@ variable "address_space" {
 }
 
 variable "subnets" {
-  description = "Map of subnet name to CIDR, e.g. { avd = \"10.20.1.0/24\" }"
+  description = "Map of subnet name to CIDR, e.g. { web = \"10.20.1.0/24\" }"
   type        = map(string)
 }
 

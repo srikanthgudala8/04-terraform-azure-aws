@@ -13,12 +13,12 @@ variable "environment" {
   default = "dev"
 }
 
-variable "avd_friendly_name" {
-  type    = string
-  default = "Demo desktops"
+variable "web_instances" {
+  type    = set(string)
+  default = ["web1", "web2"]
 }
 
-variable "avd_max_sessions_per_host" {
-  type    = number
-  default = 4
+variable "ssh_public_key" {
+  description = "Contents of your ~/.ssh/id_ed25519.pub (public key only)"
+  type        = string
 }

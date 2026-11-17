@@ -46,21 +46,22 @@ module "network" {
   address_space       = ["10.20.0.0/16"]
 
   subnets = {
-    avd = "10.20.1.0/24"
-    app = "10.20.2.0/24"
+    web  = "10.20.1.0/24"
+    data = "10.20.2.0/24"
   }
 
   tags = local.tags
 }
 
-module "avd" {
-  source = "../../modules/avd"
+module "webserver" {
+  source = "../../modules/webserver"
 
-  name                         = local.name
-  location                     = var.location
-  resource_group_name          = azurerm_resource_group.this.name
-  friendly_name                = var.avd_friendly_name
-  max_sessions_per_host        = var.avd_max_sessions_per_host
-  registration_expiration_date = timeadd(plantimestamp(), "48h")
-  tags                         = local.tags
+  name                = local.name
+  location            = var.location
+  resource_group_name = azurerm_resource_group.this.name
+  subnet_id           = module.network.subnet_ids["web"]
+  nsg_name            = module.network.nsg_names["web"]
+  instances           = var.web_instances
+  ssh_public_key      = var.ssh_public_key
+  tags                = local.tags
 }

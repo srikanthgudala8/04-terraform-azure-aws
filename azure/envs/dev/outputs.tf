@@ -6,11 +6,10 @@ output "subnet_ids" {
   value = module.network.subnet_ids
 }
 
-output "avd_host_pool_id" {
-  value = module.avd.host_pool_id
+output "web_url" {
+  value = "http://${module.webserver.lb_public_ip}"
 }
 
-output "avd_registration_token" {
-  value     = module.avd.registration_token
-  sensitive = true
+output "web_vm_private_ips" {
+  value = module.webserver.vm_private_ips
 }

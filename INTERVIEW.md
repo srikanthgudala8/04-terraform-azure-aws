@@ -56,17 +56,17 @@ can speak from experience. It costs money (NAT + ALB), so destroy after practisi
 
 ---
 
-## Azure and AVD additions
+## Azure additions
 
-- **Pitch:** "I support Azure Virtual Desktop in production, and I also codify it: a Terraform
-  module that creates the host pool, desktop application group and workspace, on top of a
-  VNet module with per-subnet NSGs and remote state in Azure Storage."
+- **Pitch:** "I built a Terraform web tier on Azure: a VNet module with per-subnet NSGs, and a
+  module that deploys Linux VMs with for_each behind a Standard load balancer, with remote state
+  in Azure Storage and cloud-init to configure nginx."
 - **Why Azure Storage for state?** Blob lease gives state locking, versioning gives recovery,
   and access is controlled with Azure RBAC.
-- **How do session hosts join the pool?** With the registration token (sensitive, short-lived),
-  usually via a VM extension. Rotate the token and never commit it.
-- **How would you scale AVD cost-effectively?** Scaling plans, start VM on connect, depth-first
-  load balancing at quiet times, deallocate idle hosts.
+- **How do the VMs get configured without SSH?** cloud-init through `custom_data` on first boot.
+  For ongoing config use a pipeline, an image (Packer) or a config tool such as Ansible.
+- **How do you scale it?** Move from fixed VMs to a VM scale set with autoscale rules, keep the
+  same load balancer, and put the image in a gallery.
 - **Azure vs AWS terms:** Resource group (no direct AWS equivalent, closest is tags + CloudFormation stack),
   VNet = VPC, NSG = security group + NACL blend, Azure Storage backend = S3 + DynamoDB.
 - **Authentication in CI:** OIDC federated credential on an Entra app registration, no client secret.

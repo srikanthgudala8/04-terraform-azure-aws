@@ -41,11 +41,11 @@ at the end of a session.
 - **Lab:** create 2 Linux VMs (Standard_B1s) with `for_each`, no public IP, SSH key auth. Remove one from the map and see which one is destroyed.
 - **Done when:** you understand the "index shift" problem with `count`.
 
-### Day 33 - Azure Virtual Desktop as code (your superpower)
-- **Learn:** map AVD concepts to Terraform resources: host pool, application group, workspace, registration token, scaling plan.
-- **Lab:** read `azure/modules/avd`, apply it, and open **Azure Virtual Desktop** in the portal to see the host pool and workspace that Terraform created.
-- **Stretch (costs money, destroy after):** add one session host VM using the `Microsoft.PowerShell.DSC` extension with the registration token, or an Azure Image Builder image.
-- **Interview value:** "I support AVD and I also deploy it with Terraform" is a very strong sentence.
+### Day 33 - A web tier on Azure VMs
+- **Learn:** how Azure Standard Load Balancer works (frontend IP, backend pool, health probe, rule), why VMs get no public IP, cloud-init for first-boot setup, system-assigned managed identity.
+- **Lab:** read `azure/modules/webserver`, apply it, then `curl` the `web_url` output. SSH is closed, so find the VMs' private IPs in the outputs and explain why you cannot reach them directly. Stop one VM and watch the health probe route traffic to the other.
+- **Stretch (costs money, destroy after):** add an NSG rule for SSH from your own IP only, or add an Azure Bastion host.
+- **Interview value:** "I built a load-balanced Linux web tier in Terraform with modules, for_each and secure defaults" is a clear, checkable claim.
 
 ### Day 34 - Terraform in CI
 - **Learn:** pipelines for IaC: `fmt`, `validate`, `plan` on PR, approval, `apply` on merge. tfsec / Checkov for security scanning, OIDC login to Azure.
