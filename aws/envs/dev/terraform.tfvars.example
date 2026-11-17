@@ -1,0 +1,4 @@
+region          = "ap-south-1"
+project         = "demo"
+environment     = "dev"
+container_image = "ghcr.io/srikanthgudala8/03-github-actions-cicd:latest"

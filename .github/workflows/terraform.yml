@@ -1,0 +1,58 @@
+name: Terraform
+
+on:
+  pull_request:
+    paths: ["**.tf", "**.tftpl", ".github/workflows/terraform.yml"]
+  push:
+    branches: [main]
+    paths: ["**.tf", "**.tftpl"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: fmt, validate, tfsec
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: terraform validate (each root module)
+        run: |
+          for dir in aws/bootstrap aws/envs/dev azure/bootstrap azure/envs/dev; do
+            echo "== $dir =="
+            terraform -chdir="$dir" init -backend=false -input=false
+            terraform -chdir="$dir" validate
+          done
+
+      - name: Security scan (tfsec)
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: true   # report findings without blocking; tighten once triaged
+
+  # Optional: a real plan needs AWS credentials. Uncomment and set the role
+  # variable once you have configured GitHub OIDC for this repo.
+  #
+  # plan:
+  #   needs: validate
+  #   if: github.event_name == 'pull_request'
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: hashicorp/setup-terraform@v3
+  #     - uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+  #         aws-region: ap-south-1
+  #     - run: terraform -chdir=aws/envs/dev init -input=false
+  #     - run: terraform -chdir=aws/envs/dev plan -input=false -var="container_image=${{ vars.CONTAINER_IMAGE }}"
